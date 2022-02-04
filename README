@@ -92,10 +92,10 @@
  7- HOW TO START ?
  
    Execute Hadr04 in 'batch' mode from macro files :
- 	% Hadr04  macro.mac
+ 	% Monitor  macro.mac
  		
    Execute Hadr04 in 'interactive mode' with visualization :
- 	% Hadr04
+ 	% Monitor
         ....
  	Idle> type your commands
  	....
