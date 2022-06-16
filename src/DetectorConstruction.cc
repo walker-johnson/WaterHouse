@@ -62,21 +62,34 @@ DetectorConstruction::DetectorConstruction()
 :G4VUserDetectorConstruction(),
  worldP(0), worldL(0), fMaterial(0), fDetectorMessenger(0)
 {
+  sphereR = 15*cm;
   fTank_x = 7*2.5*9*cm;
   fTank_y = 9*2.5*9*cm;
   fTank_z = 18*6*cm;
-  fBoxX = fTank_x+2*m; //World size X
-  fBoxY = fTank_y+2*m; //World size Y
-  fBoxZ = fTank_z+1*m;  //World size Z
-  fRoom_x = fTank_x+1*m;
-  fRoom_y = fTank_y+1*m;
-  fRoom_z = fTank_z+0.5*m;
+  fBoxX = 7*m; //World size X
+  fBoxY = 16*m; //World size Y
+  fBoxZ = 4*m;  //World size Z
+  fRoom_x = fBoxX -5*cm;
+  fRoom_y = fBoxY - 5*cm;
+  fRoom_z = fBoxZ - 5*cm;
   fSideThk = 9*2.5*2*cm;
   fTopThk = 3*18*cm;
   fChamber_x = fTank_x - 2*fSideThk;
   fChamber_y = fTank_y - 2*fSideThk;
   fChamber_z = fTank_z - fTopThk;
   fInc = 0.25*m;
+  fNeutronSource_x = 12*cm;
+  fNeutronSource_y = 37.5*cm;
+  fNeutronSource_z = 12*cm;
+  fPoly_x = fNeutronSource_x + 30*cm;
+  fPoly_y = fNeutronSource_y + 30*cm;
+  fPoly_z = fNeutronSource_z + 17.5*cm;
+  fSourceOffset_z = fPoly_z/2 - fNeutronSource_z/2 - 2.5*cm;
+  fSlab_z = 17.5*cm;
+  fGap = 10*cm;
+  fDDHead_x = 0*cm;
+  fDDHead_y = -fChamber_y/2 + fPoly_y/2 + 2.5*cm;
+  fDDHead_z = -fBoxZ/2 + fSlab_z + fGap + fPoly_z - fNeutronSource_z/2 -2.5*cm;
   DefineMaterials();
   SetMaterial("G4_AIR");   //Sets the material of the world
   fDetectorMessenger = new DetectorMessenger(this);
@@ -184,7 +197,7 @@ G4VPhysicalVolume* DetectorConstruction::ConstructVolumes()
  			        0,                          //copy number
 				checkOverlaps);             //option to check for overlaps
 
-  G4Box* roomS = new G4Box("Room",
+    G4Box* roomS = new G4Box("Room",
 			   fRoom_x/2,
 			   fRoom_y/2,
 			   fRoom_z/2);
@@ -195,13 +208,135 @@ G4VPhysicalVolume* DetectorConstruction::ConstructVolumes()
 
 
   roomP = new G4PVPlacement(0,
-			    G4ThreeVector(0,0,-fBoxZ/2+fRoom_z/2),
+			    G4ThreeVector(0,0,-fBoxZ/2 + fSlab_z + fGap  +fRoom_z/2),
 			    roomL,
 			    "Room",
 			    worldL,
 			    false,
 			    0,
 			    checkOverlaps);
+
+
+
+  G4Material* concrete = G4NistManager::Instance()->FindOrBuildMaterial("G4_CONCRETE");   
+  
+
+  G4Box* slabS = new G4Box("Slab",
+		    fRoom_x/2, fRoom_y/2, fSlab_z/2);
+
+  slabL = new G4LogicalVolume(slabS,
+			      concrete,
+			      "Slab");
+
+  slabP = new G4PVPlacement(0,
+			    G4ThreeVector(0,0, fGap + fSlab_z/2 -fBoxZ/2),
+			    slabL,
+			    "Slab",
+			    roomL,
+			    false,
+			    0,
+			    checkOverlaps);
+
+  G4double floor_z = fGap+fSlab_z-fBoxZ/2;
+
+  G4Sphere* sphereS = new G4Sphere("Sphere",
+				   0*cm,
+				   sphereR,
+				   0.0 * deg, 360 * deg,
+				   0.0 * deg, 360 * deg);
+
+  workL = new G4LogicalVolume(sphereS,
+			      fMaterial,
+			      "work");
+
+  door1L = new G4LogicalVolume(sphereS,
+			       fMaterial,
+			       "door1");
+
+  door2L = new G4LogicalVolume(sphereS,
+			       fMaterial,
+			       "door2");
+
+  ceilingL = new G4LogicalVolume(sphereS,
+				 fMaterial,
+				 "ceiling");
+  
+  beamsideL = new G4LogicalVolume(sphereS,
+				 fMaterial,
+				 "beamside");
+
+  backL = new G4LogicalVolume(sphereS,
+				 fMaterial,
+				 "back");
+
+  topL = new G4LogicalVolume(sphereS,
+				 fMaterial,
+				 "top");
+
+  workP = new G4PVPlacement(0,
+			    G4ThreeVector(-3*m, 5.5*m, floor_z + 0.5*m),
+			    workL,
+			    "work",
+			    roomL,
+			    false,
+			    0,
+			    checkOverlaps);
+  
+  door1P = new G4PVPlacement(0,
+			     G4ThreeVector(-3*m,-1.0*m, floor_z + 0.5*m),
+			     door1L,
+			     "door1",
+			     roomL,
+			     false,
+			     0,
+			     checkOverlaps);
+  
+  door2P = new G4PVPlacement(0,
+			     G4ThreeVector(2*m, 7.5*m, floor_z + 0.5*m),
+			     door2L,
+			     "door2",
+			     roomL,
+			     false,
+			     0,
+			     checkOverlaps);
+  
+  ceilingP = new G4PVPlacement(0,
+			       G4ThreeVector(0*m, 0*m, floor_z + 3.3*m),
+			       ceilingL,
+			       "ceiling",
+			       roomL,
+			       false,
+			       0,
+			       checkOverlaps);
+  
+  beamsideP = new G4PVPlacement(0,
+			       G4ThreeVector(0*m, fTank_y/2 + 20*cm, floor_z + 0.25*m),
+			       beamsideL,
+			       "beamside",
+			       roomL,
+			       false,
+			       0,
+			       checkOverlaps);
+
+  backP = new G4PVPlacement(0,
+			    G4ThreeVector(fTank_x/2 + 20*cm, 0*cm, floor_z + 0.25*m),
+			    backL,
+			    "back",
+			    roomL,
+			    false,
+			    0,
+			    checkOverlaps);
+
+  topP = new G4PVPlacement(0,
+			   G4ThreeVector(0*m, 0*m, floor_z+fTank_z+20*cm),
+			   topL,
+			   "ceiling",
+			   roomL,
+			   false,
+			   0,
+			   checkOverlaps);
+
+				   
 
 
   G4Material* water = G4NistManager::Instance()->FindOrBuildMaterial("G4_WATER");
@@ -242,7 +377,8 @@ G4VPhysicalVolume* DetectorConstruction::ConstructVolumes()
 			      false,
 			      0,
 			      checkOverlaps);
-
+  //enable to add gaps in one side of structure
+  /* 
   G4VSolid* gapS = new G4Tubs("Gap",
 			    0,
 			    0.5*cm,
@@ -279,7 +415,52 @@ G4VPhysicalVolume* DetectorConstruction::ConstructVolumes()
 				     checkOverlaps);
     }
   }
-			     
+  */
+
+  //construct the polyethylene shielding here
+  G4double density = 0.94*g/cm3;
+  G4NistManager* manager = G4NistManager::Instance();
+  G4Material* PE =  G4NistManager::Instance()->FindOrBuildMaterial("G4_POLYETHYLENE");
+  G4Element* B = manager->FindOrBuildElement("B");
+  G4Element* H = manager->FindOrBuildElement("H");
+  G4Element* O = manager->FindOrBuildElement("O");
+  G4Element* C = manager->FindOrBuildElement("C");
+  G4Material* bpoly = new G4Material("B-Poly",density,4);
+  bpoly->AddElement(B,5.*perCent);
+  bpoly->AddElement(H,11.6*perCent);
+  bpoly->AddElement(O,22.2*perCent);
+  bpoly->AddElement(C,61.2*perCent);
+
+  G4Box* polyS = new G4Box("poly",
+			   fPoly_x/2, fPoly_y/2, fPoly_z/2);
+
+  polyL = new G4LogicalVolume(polyS,
+			      bpoly,
+			      "poly");
+
+  polyP = new G4PVPlacement(0,
+			    G4ThreeVector(0,-fChamber_y/2 + fPoly_y/2 + 2.5*cm,-fChamber_z/2 + fPoly_z/2),
+			    polyL,
+			    "poly",
+			    chamberL,
+			    false,
+			    0,
+			    checkOverlaps);
+
+  G4Box* nSourceS = new G4Box("source",
+			      fNeutronSource_x/2,(fNeutronSource_y + 15*cm)/2,fNeutronSource_z/2);
+
+  nSourceL = new G4LogicalVolume(nSourceS,
+				 fMaterial,
+				 "source");
+  nSourceP = new G4PVPlacement(0,
+			       G4ThreeVector(0, fPoly_y/2 -(fNeutronSource_y + 15*cm)/2, fSourceOffset_z),
+			       nSourceL,
+			       "source",
+			       polyL,
+			       false,
+			       0,
+			       checkOverlaps);
 			    
 		 
 			   

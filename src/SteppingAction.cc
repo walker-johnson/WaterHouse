@@ -94,14 +94,43 @@ void SteppingAction::UserSteppingAction(const G4Step* step)
   if(particleName == "neutron" && post->GetStepStatus() == fGeomBoundary) {
 
        
-    //neutrons leaving the lab
-    if(preLogical == fDetector->roomL &&
-       postLogical == fDetector->worldL){
+    //neutrons leaving the tank
+    if(preLogical == fDetector->tankL &&
+       postLogical == fDetector->roomL){
       G4AnalysisManager::Instance()->FillNtupleDColumn(0,0,x/1000); //ID, column,value
       G4AnalysisManager::Instance()->FillNtupleDColumn(0,1,y/1000); //ID, column,value
       G4AnalysisManager::Instance()->FillNtupleDColumn(0,2,z/1000); //ID, column,value
       G4AnalysisManager::Instance()->FillNtupleDColumn(0,3,ekin); 
       G4AnalysisManager::Instance()->AddNtupleRow(0);
+    }
+    //neurons leaving concrete
+    if(preLogical == fDetector->slabL && postLogical == fDetector->roomL){
+      G4AnalysisManager::Instance()->FillNtupleDColumn(2,0,x/1000); //ID, column,value
+      G4AnalysisManager::Instance()->FillNtupleDColumn(2,1,y/1000); //ID, column,value
+      G4AnalysisManager::Instance()->FillNtupleDColumn(2,2,z/1000); //ID, column,value
+      G4AnalysisManager::Instance()->FillNtupleDColumn(2,3,ekin); 
+      G4AnalysisManager::Instance()->AddNtupleRow(2);
+    }
+    if(preLogical == fDetector->roomL && postLogical == fDetector->workL){
+      G4AnalysisManager::Instance()->FillH1(6,ekin);
+    }
+    if(preLogical == fDetector->roomL && postLogical == fDetector->door1L){
+      G4AnalysisManager::Instance()->FillH1(7,ekin);
+    }
+    if(preLogical == fDetector->roomL && postLogical == fDetector->door2L){
+      G4AnalysisManager::Instance()->FillH1(8,ekin);
+    }
+    if(preLogical == fDetector->roomL && postLogical == fDetector->ceilingL){
+      G4AnalysisManager::Instance()->FillH1(9,ekin);
+    }
+    if(preLogical == fDetector->roomL && postLogical == fDetector->beamsideL){
+      G4AnalysisManager::Instance()->FillH1(11,ekin);
+    }
+    if(preLogical == fDetector->roomL && postLogical == fDetector->backL){
+      G4AnalysisManager::Instance()->FillH1(13,ekin);
+    }
+    if(preLogical == fDetector->roomL && postLogical == fDetector->topL){
+      G4AnalysisManager::Instance()->FillH1(15,ekin);
     }
   }
 
@@ -109,15 +138,44 @@ void SteppingAction::UserSteppingAction(const G4Step* step)
   //Gamma passing through boundary
   if(particleName == "gamma" && post->GetStepStatus() == fGeomBoundary) {
 
-    //gamma leaving the lab
-    if(preLogical == fDetector->roomL &&
-       postLogical == fDetector->worldL){
+    //gamma leaving the tank
+    if(preLogical == fDetector->tankL &&
+       postLogical == fDetector->roomL){
       G4AnalysisManager::Instance()->FillH1(1,ekin);
       G4AnalysisManager::Instance()->FillNtupleDColumn(1,0,x/1000); //ID, column,value
       G4AnalysisManager::Instance()->FillNtupleDColumn(1,1,y/1000); //ID, column,value
       G4AnalysisManager::Instance()->FillNtupleDColumn(1,2,z/1000); //ID, column,value
       G4AnalysisManager::Instance()->FillNtupleDColumn(1,3,ekin); 
       G4AnalysisManager::Instance()->AddNtupleRow(1);
+    }
+    //gammas leaving concrete
+    if(preLogical == fDetector->slabL && postLogical == fDetector->roomL){
+      G4AnalysisManager::Instance()->FillNtupleDColumn(3,0,x/1000); //ID, column,value
+      G4AnalysisManager::Instance()->FillNtupleDColumn(3,1,y/1000); //ID, column,value
+      G4AnalysisManager::Instance()->FillNtupleDColumn(3,2,z/1000); //ID, column,value
+      G4AnalysisManager::Instance()->FillNtupleDColumn(3,3,ekin); 
+      G4AnalysisManager::Instance()->AddNtupleRow(3);
+    }
+    if(preLogical == fDetector->roomL && postLogical == fDetector->workL){
+      G4AnalysisManager::Instance()->FillH1(2,ekin);
+    }
+    if(preLogical == fDetector->roomL && postLogical == fDetector->door1L){
+      G4AnalysisManager::Instance()->FillH1(3,ekin);
+    }
+    if(preLogical == fDetector->roomL && postLogical == fDetector->door2L){
+      G4AnalysisManager::Instance()->FillH1(4,ekin);
+    }
+    if(preLogical == fDetector->roomL && postLogical == fDetector->ceilingL){
+      G4AnalysisManager::Instance()->FillH1(5,ekin);
+    }
+    if(preLogical == fDetector->roomL && postLogical == fDetector->beamsideL){
+      G4AnalysisManager::Instance()->FillH1(10,ekin);
+    }
+    if(preLogical == fDetector->roomL && postLogical == fDetector->backL){
+      G4AnalysisManager::Instance()->FillH1(12,ekin);
+    }
+    if(preLogical == fDetector->roomL && postLogical == fDetector->topL){
+      G4AnalysisManager::Instance()->FillH1(14,ekin);
     }
   }
 }

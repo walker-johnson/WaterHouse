@@ -41,6 +41,7 @@
 #include "G4PhysicalConstants.hh"
 #include "G4SystemOfUnits.hh"
 #include "Randomize.hh"
+#include "DetectorConstruction.hh"
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
@@ -52,8 +53,12 @@ PrimaryGeneratorAction::PrimaryGeneratorAction()
   
   // default particle kinematic
 
+  det = new DetectorConstruction();
 
-  sourcePos = G4ThreeVector(0,0,-0.8*m);
+
+  sourcePos = G4ThreeVector(det->GetSrcX(),
+			    det->GetSrcY(),
+			    det->GetSrcZ());
   
   G4ParticleDefinition* particle
            = G4ParticleTable::GetParticleTable()->FindParticle("neutron");

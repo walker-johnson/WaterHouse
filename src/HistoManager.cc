@@ -61,11 +61,25 @@ void HistoManager::Book()
   analysisManager->SetActivation(true);     //enable inactivation of histograms
   
   // Define histograms start values
-  const G4int kMaxHisto = 2;
-  const G4String id[] = {"0","1"};
+  const G4int kMaxHisto = 16;
+  const G4String id[] = {"0","1", "2", "3", "4", "5", "6", "7", "8","9", "10", "11", "12","13","14","15"};
   const G4String title[] = 
                 { "dummy",                                           //0
-                  "KE of Gammas Leaving Shield"                      //1
+                  "KE of Gammas Leaving Shield",                      //1
+		  "KE of Gammas - Work Area",
+		  "KE of Gammas - Front Door",
+		  "KE of Gammas - Side Door",
+		  "KE of Gammas - Ceiling",
+		  "KE of Neutrons - Work Area",
+		  "KE of Neutrons - Front Door",
+		  "KE of Neutrons - Side Door",
+		  "KE of Neutrons - Ceiling",
+		  "KE of Gammas - Beam-side",
+		  "KE of Neutrons - Beam-side",
+		  "KE of Gammas - Side",
+		  "KE of Neutrons - Side",
+		  "KE of Gammas - Top",
+		  "KE of Neutrons - Top"
                  };  
 
   // Default values (to be reset via /analysis/h1/set command)               
@@ -73,28 +87,44 @@ void HistoManager::Book()
   G4double vmin = 0.;
   G4double vmax = 10.;
 
-  // Create all histograms as inactivated 
-  // as we have not yet set nbins, vmin, vmax
   for (G4int k=0; k<kMaxHisto; k++) {
     G4int ih = analysisManager->CreateH1(id[k], title[k], nbins, vmin, vmax);
     analysisManager->SetH1Activation(ih, true);
   }
 
-  // ID=0, neutron transport
-  analysisManager->CreateNtuple("nFlux", "Neutrons hitting lab walls"); //id = 0
+  // ID=0, neutrons leaving the water tank
+  analysisManager->CreateNtuple("nFlux_tank", "Neutrons leaving the water tank"); //id = 0
   analysisManager->CreateNtupleDColumn("x");
   analysisManager->CreateNtupleDColumn("y");
   analysisManager->CreateNtupleDColumn("z");
   analysisManager->CreateNtupleDColumn("KE");
   analysisManager->FinishNtuple();
 
-    // ID=1, gamma transport
-  analysisManager->CreateNtuple("gFlux", "Gammas hitting lab walls"); //id = 1
+    // ID=1, gammas leaving the water tank
+  analysisManager->CreateNtuple("gFlux_tank", "Gammas leaving the water tank"); //id = 1
   analysisManager->CreateNtupleDColumn("x");
   analysisManager->CreateNtupleDColumn("y");
   analysisManager->CreateNtupleDColumn("z");
   analysisManager->CreateNtupleDColumn("E");
   analysisManager->FinishNtuple();
+
+  
+  // ID=2, neutrons leaving the concret slab
+  analysisManager->CreateNtuple("nFlux_slab", "Neutrons leaving the concrete slab"); //id = 0
+  analysisManager->CreateNtupleDColumn("x");
+  analysisManager->CreateNtupleDColumn("y");
+  analysisManager->CreateNtupleDColumn("z");
+  analysisManager->CreateNtupleDColumn("KE");
+  analysisManager->FinishNtuple();
+
+  // ID=3, gammas leaving the water tank
+  analysisManager->CreateNtuple("gFlux_slab", "Gammas leaving the concrete slab"); //id = 1
+  analysisManager->CreateNtupleDColumn("x");
+  analysisManager->CreateNtupleDColumn("y");
+  analysisManager->CreateNtupleDColumn("z");
+  analysisManager->CreateNtupleDColumn("E");
+  analysisManager->FinishNtuple();
+
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

@@ -46,6 +46,10 @@ class DetectorMessenger;
 class DetectorConstruction : public G4VUserDetectorConstruction
 {
 public:
+
+  G4double fDDHead_x;
+  G4double fDDHead_y;
+  G4double fDDHead_z;
   
   DetectorConstruction();
   ~DetectorConstruction();
@@ -63,6 +67,9 @@ public:
                           
   G4Material*        GetMaterial()   {return fMaterial;};
   G4double           GetSize()       {return fBoxX;};
+  G4double           GetSrcX()       {return fDDHead_x;};
+  G4double           GetSrcY()       {return fDDHead_y;};
+  G4double           GetSrcZ()       {return fDDHead_z;};
   void               PrintParameters();
 
   //world
@@ -71,11 +78,33 @@ public:
   //room
   G4LogicalVolume* roomL;
   G4VPhysicalVolume* roomP;
+  //concrete floor
+  G4LogicalVolume* slabL;
+  G4VPhysicalVolume* slabP;
+  //tank
+  G4LogicalVolume* tankL;
+  G4VPhysicalVolume* tankP;
+  //area dose rates
+  G4LogicalVolume* workL;
+  G4VPhysicalVolume* workP;
+  G4LogicalVolume* door1L;
+  G4VPhysicalVolume* door1P;
+  G4LogicalVolume* door2L;
+  G4VPhysicalVolume* door2P;
+  G4LogicalVolume* ceilingL;
+  G4VPhysicalVolume* ceilingP;
+  G4LogicalVolume* beamsideL;
+  G4VPhysicalVolume* beamsideP;
+  G4LogicalVolume* backL;
+  G4VPhysicalVolume* backP;
+  G4LogicalVolume* topL;
+  G4VPhysicalVolume* topP;
 
   
 
 private:
 
+  G4double sphereR;
   G4double fBoxX;
   G4double fBoxY;
   G4double fBoxZ;
@@ -91,18 +120,30 @@ private:
   G4double fSideThk;
   G4double fTopThk;
   G4double fInc;
+  G4double fNeutronSource_x;
+  G4double fNeutronSource_y;
+  G4double fNeutronSource_z;
+  G4double fPoly_x;
+  G4double fPoly_y;
+  G4double fPoly_z;
+  G4double fSourceOffset_z; //needed due to unsymmetrical bpoly shielding
+  G4double fSlab_z;
+  G4double fGap;
   G4Material* fMaterial;
   DetectorMessenger* fDetectorMessenger;
 
 
-  //tank
-  G4LogicalVolume* tankL;
-  G4VPhysicalVolume* tankP;
   //chamber
   G4LogicalVolume* chamberL;
   G4VPhysicalVolume* chamberP;
   //gaps
   G4LogicalVolume* gapL;
+  //poly
+  G4LogicalVolume* polyL;
+  G4VPhysicalVolume* polyP;
+  //source chamber
+  G4LogicalVolume* nSourceL;
+  G4VPhysicalVolume* nSourceP;
   
     
   void               DefineMaterials();
