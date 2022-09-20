@@ -125,6 +125,15 @@ void HistoManager::Book()
   analysisManager->CreateNtupleDColumn("E");
   analysisManager->FinishNtuple();
 
+  // ID=3, gammas leaving the water tank
+  analysisManager->CreateNtuple("neutron_beam_window", "Neutrons passing through the beam window"); //id = 1
+  analysisManager->CreateNtupleDColumn("x");
+  analysisManager->CreateNtupleDColumn("y");
+  analysisManager->CreateNtupleDColumn("z");
+  analysisManager->CreateNtupleDColumn("t");
+  analysisManager->CreateNtupleDColumn("E");
+  analysisManager->FinishNtuple();
+
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

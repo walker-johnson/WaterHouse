@@ -6,10 +6,10 @@
 /analysis/setFileName output
 
 #set the thickness of the lead reflector -- need a number and a unit
-/testhadr/det/setReflectorThickness 2 cm
+/testhadr/det/setReflectorThickness 5 cm
 
 #initialize resets the geometry with the new reflector thickness
 /run/initialize
 
 #now produce neutrons
-/run/beamOn 100000
+/run/beamOn 10000

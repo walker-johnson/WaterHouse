@@ -34,6 +34,8 @@
 #include "Run.hh"
 #include "TrackingAction.hh"
 #include "HistoManager.hh"
+#include "G4UnitsTable.hh"
+#include "G4SystemOfUnits.hh"
 
 #include "G4RunManager.hh"
                            
@@ -92,6 +94,18 @@ void SteppingAction::UserSteppingAction(const G4Step* step)
 
   //Neutron passing through boundary
   if(particleName == "neutron" && post->GetStepStatus() == fGeomBoundary) {
+
+    if(preLogical == fDetector->nSourceL &&
+       postLogical == fDetector->chamberL){
+      G4AnalysisManager::Instance()->FillNtupleDColumn(4,0,x/cm);
+      G4AnalysisManager::Instance()->FillNtupleDColumn(4,1,y/cm);
+      G4AnalysisManager::Instance()->FillNtupleDColumn(4,2,z/cm);
+      G4AnalysisManager::Instance()->FillNtupleDColumn(4,3,time/ns);
+      G4AnalysisManager::Instance()->FillNtupleDColumn(4,4,ekin/MeV);
+      G4AnalysisManager::Instance()->AddNtupleRow(4);
+      
+
+    }
 
        
     //neutrons leaving the tank

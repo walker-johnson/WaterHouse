@@ -102,6 +102,20 @@ public:
   G4VPhysicalVolume* backP;
   G4LogicalVolume* topL;
   G4VPhysicalVolume* topP;
+
+  
+  //chamber
+  G4LogicalVolume* chamberL;
+  G4VPhysicalVolume* chamberP;
+  //gaps
+  G4LogicalVolume* gapL;
+  //poly
+  G4LogicalVolume* polyL;
+  G4VPhysicalVolume* polyP;
+  //source chamber
+  G4LogicalVolume* nSourceL;
+  G4VPhysicalVolume* nSourceP;
+  //lead reflector
   G4LogicalVolume* leadReflL;
   G4VPhysicalVolume* leadReflP;
 
@@ -142,17 +156,6 @@ private:
   DetectorMessenger* fDetectorMessenger;
 
 
-  //chamber
-  G4LogicalVolume* chamberL;
-  G4VPhysicalVolume* chamberP;
-  //gaps
-  G4LogicalVolume* gapL;
-  //poly
-  G4LogicalVolume* polyL;
-  G4VPhysicalVolume* polyP;
-  //source chamber
-  G4LogicalVolume* nSourceL;
-  G4VPhysicalVolume* nSourceP;
   
     
   void               DefineMaterials();
