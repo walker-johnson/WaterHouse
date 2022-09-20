@@ -57,6 +57,7 @@ public:
   virtual G4VPhysicalVolume* Construct();
   void SetSize     (G4double, G4double, G4double);              
   void SetMaterial (G4String);
+  void SetReflectorThickness(G4double);
     
 
   G4Material* 
@@ -70,7 +71,9 @@ public:
   G4double           GetSrcX()       {return fDDHead_x;};
   G4double           GetSrcY()       {return fDDHead_y;};
   G4double           GetSrcZ()       {return fDDHead_z;};
+
   void               PrintParameters();
+  void ReinitializeGeometryVars();
 
   //world
   G4LogicalVolume* worldL;
@@ -99,6 +102,8 @@ public:
   G4VPhysicalVolume* backP;
   G4LogicalVolume* topL;
   G4VPhysicalVolume* topP;
+  G4LogicalVolume* leadReflL;
+  G4VPhysicalVolume* leadReflP;
 
   
 
@@ -119,10 +124,14 @@ private:
   G4double fChamber_z;
   G4double fSideThk;
   G4double fTopThk;
+  G4double fPbReflectorThickness;
   G4double fInc;
   G4double fNeutronSource_x;
   G4double fNeutronSource_y;
   G4double fNeutronSource_z;
+  G4double fRefl_x;
+  G4double fRefl_y;
+  G4double fRefl_z;
   G4double fPoly_x;
   G4double fPoly_y;
   G4double fPoly_z;

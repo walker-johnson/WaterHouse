@@ -63,6 +63,7 @@ private:
   G4UIdirectory*             fDetDir;
   G4UIcmdWithAString*        fMaterCmd;
   G4UIcmdWithADoubleAndUnit* fSizeCmd;
+  G4UIcmdWithADoubleAndUnit* fReflCmd;
   G4UIcommand*               fIsotopeCmd;
 };
 

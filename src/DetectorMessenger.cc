@@ -45,7 +45,7 @@
 
 DetectorMessenger::DetectorMessenger(DetectorConstruction * Det)
 :G4UImessenger(), 
- fDetector(Det), fTestemDir(0), fDetDir(0), fMaterCmd(0), fSizeCmd(0),
+ fDetector(Det), fTestemDir(0), fDetDir(0), fMaterCmd(0), fSizeCmd(0), fReflCmd(0),
  fIsotopeCmd(0)
 { 
   fTestemDir = new G4UIdirectory("/testhadr/");
@@ -66,6 +66,13 @@ DetectorMessenger::DetectorMessenger(DetectorConstruction * Det)
   fSizeCmd->SetRange("Size>0.");
   fSizeCmd->SetUnitCategory("Length");
   fSizeCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
+
+  fReflCmd = new G4UIcmdWithADoubleAndUnit("/testhadr/det/setReflectorThickness",this);
+  fReflCmd->SetGuidance("Set thickness of lead reflector");
+  fReflCmd->SetParameterName("Thickness",false);
+  fReflCmd->SetRange("Thickness>0.");
+  fReflCmd->SetUnitCategory("Length");
+  fReflCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
        
   fIsotopeCmd = new G4UIcommand("/testhadr/det/setIsotopeMat",this);
   fIsotopeCmd->SetGuidance("Build and select a material with single isotope");
@@ -108,6 +115,7 @@ DetectorMessenger::~DetectorMessenger()
   delete fIsotopeCmd;
   delete fDetDir;
   delete fTestemDir;
+  delete fReflCmd;
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -120,6 +128,9 @@ void DetectorMessenger::SetNewValue(G4UIcommand* command,G4String newValue)
   
   if( command == fSizeCmd )
     { fDetector->SetSize(fSizeCmd->GetNewDoubleValue(newValue), fSizeCmd->GetNewDoubleValue(newValue), fSizeCmd->GetNewDoubleValue(newValue));}
+
+  if( command = fReflCmd )
+    {fDetector->SetReflectorThickness(fReflCmd->GetNewDoubleValue(newValue));};
      
   if (command == fIsotopeCmd)
    {

@@ -74,6 +74,7 @@ DetectorConstruction::DetectorConstruction()
   fRoom_z = fBoxZ - 5*cm;
   fSideThk = 9*2.5*2*cm;
   fTopThk = 3*18*cm;
+  fPbReflectorThickness = 5*cm;
   fChamber_x = fTank_x - 2*fSideThk;
   fChamber_y = fTank_y - 2*fSideThk;
   fChamber_z = fTank_z - fTopThk;
@@ -81,15 +82,18 @@ DetectorConstruction::DetectorConstruction()
   fNeutronSource_x = 12*cm;
   fNeutronSource_y = 37.5*cm;
   fNeutronSource_z = 12*cm;
-  fPoly_x = fNeutronSource_x + 30*cm;
-  fPoly_y = fNeutronSource_y + 30*cm;
-  fPoly_z = fNeutronSource_z + 17.5*cm;
-  fSourceOffset_z = fPoly_z/2 - fNeutronSource_z/2 - 2.5*cm;
+  fRefl_x = fNeutronSource_x + fPbReflectorThickness*2;
+  fRefl_y = fNeutronSource_y + fPbReflectorThickness + 15*cm;
+  fRefl_z = fNeutronSource_z + fPbReflectorThickness*2;
+  fPoly_x = fNeutronSource_x + 30*cm + fPbReflectorThickness;
+  fPoly_y = fNeutronSource_y + 30*cm + fPbReflectorThickness/2;
+  fPoly_z = fNeutronSource_z + 30*cm + fPbReflectorThickness;
+  fSourceOffset_z = fPoly_z/2 - fNeutronSource_z/2 - fPbReflectorThickness - 2.5*cm;
   fSlab_z = 17.5*cm;
   fGap = 10*cm;
   fDDHead_x = 0*cm;
   fDDHead_y = -fChamber_y/2 + fPoly_y/2 + 2.5*cm;
-  fDDHead_z = -fBoxZ/2 + fSlab_z + fGap + fPoly_z - fNeutronSource_z/2 -2.5*cm;
+  fDDHead_z = -fBoxZ/2 + fSlab_z + fGap + fPoly_z/2;
   DefineMaterials();
   SetMaterial("G4_AIR");   //Sets the material of the world
   fDetectorMessenger = new DetectorMessenger(this);
@@ -447,6 +451,27 @@ G4VPhysicalVolume* DetectorConstruction::ConstructVolumes()
 			    0,
 			    checkOverlaps);
 
+  //lead reflector
+  G4Material* Pb = G4NistManager::Instance()->FindOrBuildMaterial("G4_Pb");
+
+  G4Box* leadReflS = new G4Box("reflector",
+			       fRefl_x/2, fRefl_y/2, fRefl_z/2);
+  
+  leadReflL = new G4LogicalVolume(leadReflS,
+				  Pb,
+				  "reflector");
+
+  leadReflP = new G4PVPlacement(0,
+				G4ThreeVector(0, fPoly_y/2 -fRefl_y/2, 0),
+				leadReflL,
+				"refelctor",
+				polyL,
+				false,
+				0,
+				checkOverlaps);
+				
+			       
+
   G4Box* nSourceS = new G4Box("source",
 			      fNeutronSource_x/2,(fNeutronSource_y + 15*cm)/2,fNeutronSource_z/2);
 
@@ -454,10 +479,10 @@ G4VPhysicalVolume* DetectorConstruction::ConstructVolumes()
 				 fMaterial,
 				 "source");
   nSourceP = new G4PVPlacement(0,
-			       G4ThreeVector(0, fPoly_y/2 -(fNeutronSource_y + 15*cm)/2, fSourceOffset_z),
+			       G4ThreeVector(0, fRefl_y/2 -(fNeutronSource_y + 15*cm)/2),
 			       nSourceL,
 			       "source",
-			       polyL,
+			       leadReflL,
 			       false,
 			       0,
 			       checkOverlaps);
@@ -511,6 +536,36 @@ void DetectorConstruction::SetSize(G4double x, G4double y, G4double z)
   fBoxY = y;
   fBoxZ = z;
   G4RunManager::GetRunManager()->ReinitializeGeometry();
+}
+
+void DetectorConstruction::SetReflectorThickness(G4double thk){
+  fPbReflectorThickness = thk;
+  std::cout << "reflector thickness updated: " << fPbReflectorThickness << std::endl;
+  ReinitializeGeometryVars();
+  G4RunManager::GetRunManager()->ReinitializeGeometry();
+  
+}
+
+void DetectorConstruction::ReinitializeGeometryVars(){
+  fChamber_x = fTank_x - 2*fSideThk;
+  fChamber_y = fTank_y - 2*fSideThk;
+  fChamber_z = fTank_z - fTopThk;
+  fInc = 0.25*m;
+  fNeutronSource_x = 12*cm;
+  fNeutronSource_y = 37.5*cm;
+  fNeutronSource_z = 12*cm;
+  fRefl_x = fNeutronSource_x + fPbReflectorThickness*2;
+  fRefl_y = fNeutronSource_y + fPbReflectorThickness + 15*cm;
+  fRefl_z = fNeutronSource_z + fPbReflectorThickness*2;
+  fPoly_x = fNeutronSource_x + 30*cm + fPbReflectorThickness;
+  fPoly_y = fNeutronSource_y + 30*cm + fPbReflectorThickness/2;
+  fPoly_z = fNeutronSource_z + 30*cm + fPbReflectorThickness;
+  fSourceOffset_z = fPoly_z/2 - fNeutronSource_z/2 - fPbReflectorThickness - 2.5*cm;
+  fSlab_z = 17.5*cm;
+  fGap = 10*cm;
+  fDDHead_x = 0*cm;
+  fDDHead_y = -fChamber_y/2 + fPoly_y/2 + 2.5*cm;
+  fDDHead_z = -fBoxZ/2 + fSlab_z + fGap + fPoly_z/2;
 }
 
 

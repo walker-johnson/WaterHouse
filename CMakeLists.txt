@@ -40,6 +40,7 @@ target_link_libraries(Monitor -lm  ${Geant4_LIBRARIES} )
 # relies on these scripts being in the current working directory.
 #
 set(Monitor_SCRIPTS
+    example.mac
     vis.mac
     analysis.mac
     10e7run.mac
