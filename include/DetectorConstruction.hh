@@ -58,6 +58,7 @@ public:
   void SetSize     (G4double, G4double, G4double);              
   void SetMaterial (G4String);
   void SetReflectorThickness(G4double);
+  void SetExtensionLength(G4double);
     
 
   G4Material* 
@@ -118,6 +119,10 @@ public:
   //lead reflector
   G4LogicalVolume* leadReflL;
   G4VPhysicalVolume* leadReflP;
+  //window
+  
+  G4LogicalVolume* polyWindowL;
+  G4VPhysicalVolume* polyWindowP;
 
   
 
@@ -139,6 +144,7 @@ private:
   G4double fSideThk;
   G4double fTopThk;
   G4double fPbReflectorThickness;
+  G4double fReflectorExtension;
   G4double fInc;
   G4double fNeutronSource_x;
   G4double fNeutronSource_y;

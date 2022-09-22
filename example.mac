@@ -6,7 +6,10 @@
 /analysis/setFileName output
 
 #set the thickness of the lead reflector -- need a number and a unit
-/testhadr/det/setReflectorThickness 5 cm
+/testhadr/det/setReflectorThickness 15 cm
+
+#set the length of the lead reflector extension -- need a number and a unit
+/testhadr/det/setReflectorExtension 10 cm
 
 #initialize resets the geometry with the new reflector thickness
 /run/initialize

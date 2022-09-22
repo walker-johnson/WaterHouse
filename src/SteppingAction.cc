@@ -95,7 +95,7 @@ void SteppingAction::UserSteppingAction(const G4Step* step)
   //Neutron passing through boundary
   if(particleName == "neutron" && post->GetStepStatus() == fGeomBoundary) {
 
-    if(preLogical == fDetector->nSourceL &&
+    if(preLogical == fDetector->polyWindowL &&
        postLogical == fDetector->chamberL){
       G4AnalysisManager::Instance()->FillNtupleDColumn(4,0,x/cm);
       G4AnalysisManager::Instance()->FillNtupleDColumn(4,1,y/cm);

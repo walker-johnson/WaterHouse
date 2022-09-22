@@ -64,6 +64,7 @@ private:
   G4UIcmdWithAString*        fMaterCmd;
   G4UIcmdWithADoubleAndUnit* fSizeCmd;
   G4UIcmdWithADoubleAndUnit* fReflCmd;
+  G4UIcmdWithADoubleAndUnit* fExtCmd;
   G4UIcommand*               fIsotopeCmd;
 };
 

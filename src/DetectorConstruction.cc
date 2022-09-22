@@ -63,9 +63,9 @@ DetectorConstruction::DetectorConstruction()
  worldP(0), worldL(0), fMaterial(0), fDetectorMessenger(0)
 {
   sphereR = 15*cm;
-  fTank_x = 7*2.5*9*cm;
-  fTank_y = 9*2.5*9*cm;
-  fTank_z = 18*6*cm;
+  fTank_x = 7*2.5*9*cm + 30*cm;
+  fTank_y = 9*2.5*9*cm + 30*cm;
+  fTank_z = 18*6*cm + 30*cm;
   fBoxX = 7*m; //World size X
   fBoxY = 16*m; //World size Y
   fBoxZ = 4*m;  //World size Z
@@ -75,6 +75,7 @@ DetectorConstruction::DetectorConstruction()
   fSideThk = 9*2.5*2*cm;
   fTopThk = 3*18*cm;
   fPbReflectorThickness = 5*cm;
+  fReflectorExtension = 10*cm;
   fChamber_x = fTank_x - 2*fSideThk;
   fChamber_y = fTank_y - 2*fSideThk;
   fChamber_z = fTank_z - fTopThk;
@@ -83,10 +84,10 @@ DetectorConstruction::DetectorConstruction()
   fNeutronSource_y = 37.5*cm;
   fNeutronSource_z = 12*cm;
   fRefl_x = fNeutronSource_x + fPbReflectorThickness*2;
-  fRefl_y = fNeutronSource_y + fPbReflectorThickness + 15*cm;
+  fRefl_y = fNeutronSource_y + fPbReflectorThickness + fReflectorExtension/2;
   fRefl_z = fNeutronSource_z + fPbReflectorThickness*2;
   fPoly_x = fNeutronSource_x + 30*cm + fPbReflectorThickness;
-  fPoly_y = fNeutronSource_y + 30*cm + fPbReflectorThickness/2;
+  fPoly_y = fNeutronSource_y + 30*cm + fPbReflectorThickness/2 + fReflectorExtension/2;
   fPoly_z = fNeutronSource_z + 30*cm + fPbReflectorThickness;
   fSourceOffset_z = fPoly_z/2 - fNeutronSource_z/2 - fPbReflectorThickness - 2.5*cm;
   fSlab_z = 17.5*cm;
@@ -236,7 +237,7 @@ G4VPhysicalVolume* DetectorConstruction::ConstructVolumes()
 			    G4ThreeVector(0,0, fGap + fSlab_z/2 -fBoxZ/2),
 			    slabL,
 			    "Slab",
-			    roomL,
+			    worldL,
 			    false,
 			    0,
 			    checkOverlaps);
@@ -462,24 +463,40 @@ G4VPhysicalVolume* DetectorConstruction::ConstructVolumes()
 				  "reflector");
 
   leadReflP = new G4PVPlacement(0,
-				G4ThreeVector(0, fPoly_y/2 -fRefl_y/2, 0),
+				G4ThreeVector(0, fPoly_y/2 -fRefl_y/2 - 15*cm , 0),
 				leadReflL,
 				"refelctor",
 				polyL,
 				false,
 				0,
 				checkOverlaps);
+
+  G4Box* polyWindowS = new G4Box("source",
+			      fNeutronSource_x/2,15*cm/2,fNeutronSource_z/2);
+
+  polyWindowL = new G4LogicalVolume(polyWindowS,
+				 fMaterial,
+				 "source");
+  polyWindowP = new G4PVPlacement(0,
+				  G4ThreeVector(0, fPoly_y/2 - 15*cm/2 ,0),
+			       polyWindowL,
+			       "source",
+			       polyL,
+			       false,
+			       0,
+			       checkOverlaps);
+
 				
 			       
 
   G4Box* nSourceS = new G4Box("source",
-			      fNeutronSource_x/2,(fNeutronSource_y + 15*cm)/2,fNeutronSource_z/2);
+			      fNeutronSource_x/2,(fRefl_y - fPbReflectorThickness)/2,fNeutronSource_z/2);
 
   nSourceL = new G4LogicalVolume(nSourceS,
 				 fMaterial,
 				 "source");
   nSourceP = new G4PVPlacement(0,
-			       G4ThreeVector(0, fRefl_y/2 -(fNeutronSource_y + 15*cm)/2),
+			       G4ThreeVector(0, fRefl_y/2 -(fRefl_y - fPbReflectorThickness)/2, 0),
 			       nSourceL,
 			       "source",
 			       leadReflL,
@@ -546,6 +563,13 @@ void DetectorConstruction::SetReflectorThickness(G4double thk){
   
 }
 
+void DetectorConstruction::SetExtensionLength(G4double len){
+  fReflectorExtension = len;
+  std::cout << "refelctor extension length changed" << fReflectorExtension << std::endl;
+  ReinitializeGeometryVars();
+  G4RunManager::GetRunManager()->ReinitializeGeometry();
+}
+
 void DetectorConstruction::ReinitializeGeometryVars(){
   fChamber_x = fTank_x - 2*fSideThk;
   fChamber_y = fTank_y - 2*fSideThk;
@@ -555,10 +579,10 @@ void DetectorConstruction::ReinitializeGeometryVars(){
   fNeutronSource_y = 37.5*cm;
   fNeutronSource_z = 12*cm;
   fRefl_x = fNeutronSource_x + fPbReflectorThickness*2;
-  fRefl_y = fNeutronSource_y + fPbReflectorThickness + 15*cm;
+  fRefl_y = fNeutronSource_y + fPbReflectorThickness + fReflectorExtension/2;
   fRefl_z = fNeutronSource_z + fPbReflectorThickness*2;
   fPoly_x = fNeutronSource_x + 30*cm + fPbReflectorThickness;
-  fPoly_y = fNeutronSource_y + 30*cm + fPbReflectorThickness/2;
+  fPoly_y = fNeutronSource_y + 30*cm + fPbReflectorThickness/2 + fReflectorExtension/2;
   fPoly_z = fNeutronSource_z + 30*cm + fPbReflectorThickness;
   fSourceOffset_z = fPoly_z/2 - fNeutronSource_z/2 - fPbReflectorThickness - 2.5*cm;
   fSlab_z = 17.5*cm;
